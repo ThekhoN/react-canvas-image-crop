@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { eventStateReducer, ACTIONS, initialEventState } from "./reducers";
 
+/* very brittle */
+
 export const imgSrcURL =
   "https://images.unsplash.com/photo-1504884790557-80daa3a9e621?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=360&q=80";
 
@@ -74,24 +76,12 @@ const ResizableImage = ({ src, alt }) => {
   let resizeImgRef = React.createRef();
   const resizeCanvas = document.createElement("canvas");
 
-  const resizeImage = (width, height, resizeContainerRef) => {
-    // console.log("resizing image...");
+  const resizeImage = (width, height, resizeContainer) => {
     resizeCanvas.width = width;
     resizeCanvas.height = height;
     resizeCanvas.getContext("2d").drawImage(originalImg, 0, 0, width, height);
-    // $(image_target).attr('src', resize_canvas.toDataURL("image/png"));
-    console.log("resizeContainerRef: ", resizeContainerRef);
-    // resizeImgRef.current.src = resizeCanvas.toDataURL("image/png");
-
-    const img = document.getElementById("img");
+    const img = resizeContainer.querySelector("img");
     img.src = resizeCanvas.toDataURL("image/png");
-
-    // if (resizeContainerRef && resizeContainerRef.current) {
-    //   console.log("img: ", resizeContainerRef.current.querySelector("img"));
-    //   resizeContainerRef.current.querySelector(
-    //     "img"
-    //   ).src = resizeCanvas.toDataURL("image/png");
-    // }
   };
 
   const resizing = e => {
@@ -99,12 +89,7 @@ const ResizableImage = ({ src, alt }) => {
     let height = e.clientY - eventState.offsetTop;
     const left = eventState.offsetLeft;
     const top = eventState.offsetTop;
-    const resizeContainer = document.querySelector(".resize-container");
-    console.log("eventState: ", eventState);
-    console.log("left: ", left);
-    console.log("top: ", top);
-
-    // console.log("height: ", height);
+    const resizeContainer = e.target.parentNode;
 
     if (constrain || e.shiftKey) {
       height = (width / originalImg.width) * originalImg.height;
@@ -116,7 +101,7 @@ const ResizableImage = ({ src, alt }) => {
       width < maxWidth &&
       height < maxHeight
     ) {
-      resizeImage(width, height);
+      resizeImage(width, height, resizeContainer);
 
       resizeContainer.style.left = left;
       resizeContainer.style.top = top;
@@ -173,14 +158,6 @@ const ResizableImage = ({ src, alt }) => {
     window.addEventListener("mousemove", resizing);
     window.addEventListener("mouseup", endResize);
   };
-
-  //   React.useEffect(() => {
-  //     resizeContainerRef.current.addEventListener("mousedown", event => {
-  //       console.log("mousedown running...");
-  //       startResize(event);
-  //       // onMouseDown={startResize}
-  //     });
-  //   });
 
   return (
     <ResizeContainer
