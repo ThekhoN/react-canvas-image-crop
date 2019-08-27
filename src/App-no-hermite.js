@@ -2,11 +2,12 @@ import React from "react";
 import { Rnd } from "react-rnd";
 import styled from "styled-components";
 import debugBase64 from "./utils/debug-base64";
-import Hermite_class from "hermite-resize";
-var HERMITE = new Hermite_class();
 
 const imgSrcURL =
-  "https://images.unsplash.com/photo-1504884790557-80daa3a9e621?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1920&q=80";
+  "https://images.unsplash.com/photo-1566877633506-9336087c6a20?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=640&q=80";
+
+// const imgSrcURL =
+// "https://images.unsplash.com/photo-1504884790557-80daa3a9e621?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1920&q=80";
 
 const ImageContainer = styled.div`
   background: #f2f2f2;
@@ -213,7 +214,6 @@ class App extends React.Component {
             }
           }}
           onResizeStop={(e, direction, ref, delta, position) => {
-            console.log("using HERMITE!");
             this.setState(
               {
                 width: ref.style.width,
@@ -237,13 +237,6 @@ class App extends React.Component {
                     sanitizedWidth,
                     sanitizedHeight
                   );
-
-                HERMITE.resample_single(
-                  this.resizeCanvasRef,
-                  sanitizedWidth,
-                  sanitizedHeight,
-                  true
-                );
 
                 this.canvasRefImg.setAttribute(
                   "src",
